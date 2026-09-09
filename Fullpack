@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="te">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Open Graph (OG) Previewer</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    body {
+      background-color: #f4f7f9;
+      margin: 0;
+      padding: 20px;
+    }
+    .tool-card {
+      max-width: 650px;
+      margin: 20px auto;
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+      border: 1px solid #e1e8ed;
+    }
+    .tool-header {
+      background-color: #1565c0;
+      color: #ffffff;
+      padding: 24px 20px;
+      text-align: center;
+    }
+    .tool-header h1 {
+      margin: 0 0 6px 0;
+      font-size: 22px;
+      font-weight: 700;
+    }
+    .tool-header p {
+      margin: 0;
+      font-size: 13px;
+      opacity: 0.9;
+    }
+    .tool-body {
+      padding: 24px;
+    }
+    .step-group {
+      margin-bottom: 20px;
+    }
+    .step-label {
+      color: #1565c0;
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 8px;
+      display: block;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #bce0fd;
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+      background-color: #fafcfe;
+      transition: border-color 0.2s;
+    }
+    input[type="text"]:focus {
+      border-color: #1565c0;
+      background-color: #ffffff;
+    }
+    .btn-container {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+      margin-bottom: 20px;
+    }
+    .action-btn {
+      flex: 1;
+      background-color: #1565c0;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .action-btn:hover {
+      background-color: #0d47a1;
+    }
+    
+    .preview-box {
+      border: 1px solid #e1e8ed;
+      border-radius: 10px;
+      overflow: hidden;
+      background-color: #ffffff;
+      margin-top: 15px;
+      display: none;
+    }
+    .preview-img {
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+      background-color: #e9ecef;
+      display: block;
+    }
+    .preview-content {
+      padding: 14px;
+      background-color: #f8f9fa;
+      border-top: 1px solid #f0f0f0;
+    }
+    .preview-domain {
+      font-size: 11px;
+      color: #65676b;
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .preview-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1c1e21;
+      margin: 0 0 6px 0;
+      line-height: 1.3;
+    }
+    .preview-desc {
+      font-size: 13px;
+      color: #606770;
+      margin: 0;
+      line-height: 1.4;
+    }
+    .loading-text {
+      text-align: center;
+      color: #1565c0;
+      font-weight: bold;
+      display: none;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+
+<div class="tool-card">
+  <div class="tool-header">
+    <h1>Open Graph (OG) Previewer</h1>
+    <p>Check how your link looks when shared on social media</p>
+  </div>
+
+  <div class="tool-body">
+    <div class="step-group">
+      <label class="step-label">1. Enter Webpage URL</label>
+      <input type="text" id="urlInput" placeholder="https://github.com">
+    </div>
+
+    <div class="btn-container">
+      <button class="action-btn" onclick="fetchOgData()">Generate Preview</button>
+    </div>
+
+    <div class="loading-text" id="loading">Fetching Open Graph Data...</div>
+
+    <div class="step-group" id="previewContainer">
+      <label class="step-label" id="previewLabel" style="display:none;">2. Social Media Card Preview</label>
+      <div class="preview-box" id="previewBox">
+        <img id="ogImage" class="preview-img" src="" alt="OG Image Preview">
+        <div class="preview-content">
+          <div id="ogDomain" class="preview-domain">example.com</div>
+          <h3 id="ogTitle" class="preview-title">Title will appear here</h3>
+          <p id="ogDesc" class="preview-desc">Description will appear here...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  async function fetchOgData() {
+    let url = document.getElementById('urlInput').value.trim();
+    if (!url) {
+      alert('Please enter a valid URL');
+      return;
+    }
+
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      url = 'https://' + url;
+      document.getElementById('urlInput').value = url;
+    }
+
+    const loading = document.getElementById('loading');
+    const previewBox = document.getElementById('previewBox');
+    const previewLabel = document.getElementById('previewLabel');
+
+    loading.style.display = 'block';
+    previewBox.style.display = 'none';
+
+    try {
+      // Primary API Request
+      const response = await fetch(`https://api.microlink.io?url=${encodeURIComponent(url)}`);
+      const result = await response.json();
+
+      if (result.status === 'success' && (result.data.title || result.data.image)) {
+        renderPreview(
+          result.data.title || 'No Title Found',
+          result.data.description || 'No Description Found',
+          result.data.publisher || new URL(url).hostname,
+          result.data.image ? result.data.image.url : 'https://via.placeholder.com/600x315?text=No+OG+Image'
+        );
+      } else {
+        // Fallback Mechanism using Open Graph HTML Parsing
+        fetchFallback(url);
+      }
+    } catch (error) {
+      fetchFallback(url);
+    } finally {
+      loading.style.display = 'none';
+    }
+  }
+
+  async function fetchFallback(targetUrl) {
+    try {
+      const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`);
+      const data = await res.json();
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(data.contents, 'text/html');
+
+      const title = doc.querySelector('meta[property="og:title"]')?.content || doc.querySelector('title')?.innerText || 'No Title Found';
+      const desc = doc.querySelector('meta[property="og:description"]')?.content || doc.querySelector('meta[name="description"]')?.content || 'No Description Found';
+      const image = doc.querySelector('meta[property="og:image"]')?.content || 'https://via.placeholder.com/600x315?text=No+OG+Image';
+
+      renderPreview(title, desc, new URL(targetUrl).hostname, image);
+    } catch (err) {
+      alert('Could not fetch details for this URL. Please try another public web link.');
+    }
+  }
+
+  function renderPreview(title, desc, domain, image) {
+    document.getElementById('ogTitle').innerText = title;
+    document.getElementById('ogDesc').innerText = desc;
+    document.getElementById('ogDomain').innerText = domain;
+    document.getElementById('ogImage').src = image;
+
+    document.getElementById('previewLabel').style.display = 'block';
+    document.getElementById('previewBox').style.display = 'block';
+  }
+</script>
+
+</body>
+</html>
