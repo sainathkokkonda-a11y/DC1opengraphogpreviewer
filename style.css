@@ -1,0 +1,130 @@
+* {
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+body {
+  background-color: #f4f7f9;
+  margin: 0;
+  padding: 20px;
+}
+.tool-card {
+  max-width: 650px;
+  margin: 20px auto;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  border: 1px solid #e1e8ed;
+}
+.tool-header {
+  background-color: #1565c0;
+  color: #ffffff;
+  padding: 24px 20px;
+  text-align: center;
+}
+.tool-header h1 {
+  margin: 0 0 6px 0;
+  font-size: 22px;
+  font-weight: 700;
+}
+.tool-header p {
+  margin: 0;
+  font-size: 13px;
+  opacity: 0.9;
+}
+.tool-body {
+  padding: 24px;
+}
+.step-group {
+  margin-bottom: 20px;
+}
+.step-label {
+  color: #1565c0;
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 8px;
+  display: block;
+}
+input[type="text"] {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #bce0fd;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  background-color: #fafcfe;
+  transition: border-color 0.2s;
+}
+input[type="text"]:focus {
+  border-color: #1565c0;
+  background-color: #ffffff;
+}
+.btn-container {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+.action-btn {
+  flex: 1;
+  background-color: #1565c0;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.action-btn:hover {
+  background-color: #0d47a1;
+}
+
+.preview-box {
+  border: 1px solid #e1e8ed;
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: #ffffff;
+  margin-top: 15px;
+  display: none;
+}
+.preview-img {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  background-color: #e9ecef;
+  display: block;
+}
+.preview-content {
+  padding: 14px;
+  background-color: #f8f9fa;
+  border-top: 1px solid #f0f0f0;
+}
+.preview-domain {
+  font-size: 11px;
+  color: #65676b;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.preview-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1c1e21;
+  margin: 0 0 6px 0;
+  line-height: 1.3;
+}
+.preview-desc {
+  font-size: 13px;
+  color: #606770;
+  margin: 0;
+  line-height: 1.4;
+}
+.loading-text {
+  text-align: center;
+  color: #1565c0;
+  font-weight: bold;
+  display: none;
+  margin: 10px 0;
+}
